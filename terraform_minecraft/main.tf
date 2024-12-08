@@ -40,7 +40,7 @@ variable "your_ip" {
 variable "your_public_key" {
   type        = string
   description = "Public SSH key."
-  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD"
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDP1/245AkQW3B4t/Ww6Vhvruuw9psYqoAr+Z722MDTUec6j+0SfxloeuuBcE+bsR+B/q3X36u02hhGJIjvgH2jGTLMFEo42WvA+N23fidzC1u9/FH+4DB+eNI0JZGCJGHinpRS6mm8oNy+4dwqtQ5i3Kpz+fsGa5vs7d+T0+8GkqV02lDXpAiGMvxAQN3paYW7OuXEThjkErhu+73/vsE1OSudNQwJKNHfU15tvtYCFnCtGhK7fjLhyH/39QG4ShxXr9FSIz3pB/omQ8wwkYiBghyfTra97qx8jX8aQ/NWqKypIASKLm6vMTqy6/ZOQEETk7gQrCHWBlocqcmId4PH rober@forsyth"
 }
 
 variable "mojang_server_url" {
@@ -141,10 +141,10 @@ resource "aws_security_group" "minecraft" {
 }
 
 # Key Pair
-# resource "aws_key_pair" "home" {
-#   key_name   = "Home"
-#   public_key = var.your_public_key
-# }
+resource "aws_key_pair" "home" {
+  key_name   = "Home"
+  public_key = var.your_public_key
+}
 
 # Minecraft EC2 Instance
 resource "aws_instance" "minecraft" {
@@ -154,6 +154,7 @@ resource "aws_instance" "minecraft" {
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.minecraft_s3_profile.name
+  key_name                    = aws_key_pair.home.key_name
   user_data                   = <<-EOF
     #!/bin/bash
     set -e
