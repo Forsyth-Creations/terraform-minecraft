@@ -1,4 +1,10 @@
 terraform {
+  backend "s3" {
+    bucket         = "minecraft-terraform-state"   # Replace with your bucket name
+    key            = "minecraft-terraform.tfstate"       # Path to the state file in the bucket
+    region         = "us-east-1"               # Specify the appropriate region
+    encrypt        = true                      # Optional: Enable server-side encryption
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -10,16 +16,19 @@ terraform {
 variable "your_region" {
   type        = string
   description = "Where you want your server to be. The options are here https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html."
+  default    = "us-east-1"
 }
 
 variable "your_ami" {
   type        = string
   description = "Insert AMI for your instance. Please refer to default Amazon Linux AMIs for every region. Find your AMI here https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html"
+  default    = "ami-0c3fd0f5d33134a76"
 }
 
 variable "your_ip" {
   type        = string
   description = "Only this IP will be able to administer the server. Find it here https://www.whatsmyip.org/."
+  default    = "0.0.0.0/0"
 }
 
 variable "your_public_key" {
@@ -43,7 +52,7 @@ resource "aws_security_group" "minecraft" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.your_ip}/32"]
+    cidr_blocks = ["${var.your_ip}"]
   }
   ingress {
     description = "Receive Minecraft from everywhere."

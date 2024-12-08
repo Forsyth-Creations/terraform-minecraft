@@ -1,0 +1,78 @@
+name: Create the Infrastructure
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+    ensure_artifact_repos:
+        runs-on: self-hosted
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v2
+
+          - name: Set up Terraform
+            uses: hashicorp/setup-terraform@v2.0.0
+            with:
+              terraform_version: 1.9.7
+
+          - name: Initialize Terraform
+            env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            run: |
+              cd terraform_initial
+              terraform init
+
+          - name: Plan Terraform
+            id: plan
+            env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            run: |
+              cd terraform_initial
+              terraform plan -out=tfplan
+        
+          - name: Apply Terraform
+            env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            run: |
+              cd terraform_initial
+              terraform apply -auto-approve tfplan
+
+    terraform-apply:
+      runs-on: self-hosted
+  
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Set up Terraform
+          uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 1.9.7
+
+        - name: Initialize Terraform
+          env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: |
+            cd terraform_minecraft
+            terraform init
+
+        - name: Plan Terraform
+          id: plan
+          env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: |
+            cd terraform_minecraft
+            terraform plan -out=tfplan
+        
+        - name: Apply Terraform
+          env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          run: |
+            cd terraform_minecraft
+            terraform apply -auto-approve tfplan
