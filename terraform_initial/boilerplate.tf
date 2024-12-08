@@ -5,7 +5,7 @@
 # facilitate the creation of AWS resources
 terraform {
   backend "s3" {
-    bucket         = "padua-terraform-state"   # Replace with your bucket name
+    bucket         = "minecraft-terraform-state"   # Replace with your bucket name
     key            = "boilerplate-terraform.tfstate"       # Path to the state file in the bucket
     region         = "us-east-1"               # Specify the appropriate region
     encrypt        = true                      # Optional: Enable server-side encryption
