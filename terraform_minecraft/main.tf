@@ -153,7 +153,7 @@ resource "aws_instance" "minecraft" {
   subnet_id                   = aws_subnet.minecraft_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
   associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_role.minecraft_s3_role.name
+  iam_instance_profile        = aws_iam_instance_profile.minecraft_s3_profile.name
   user_data                   = <<-EOF
     #!/bin/bash
     set -e
