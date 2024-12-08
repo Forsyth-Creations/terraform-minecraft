@@ -43,6 +43,12 @@ variable "mojang_server_url" {
   default     = "https://piston-data.mojang.com/v1/objects/4707d00eb834b446575d89a61a11b5d548d8c001/server.jar"
 }
 
+variable "s3_backup_bucket" {
+  type        = string
+  description = "S3 bucket for backups."
+  default     = "minecraft-world-backup"
+}
+
 provider "aws" {
   profile = "default"
   region  = var.your_region
@@ -205,8 +211,7 @@ output "instance_ip_addr" {
 }
 
 resource "aws_s3_bucket" "minecraft_backup" {
-  bucket        = "minecraft-world-backup"
-  acl           = "private"
+  bucket        = var.s3_backup_bucket
   force_destroy = true
 
   tags = {
