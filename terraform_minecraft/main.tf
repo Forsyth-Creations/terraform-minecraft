@@ -133,10 +133,10 @@ resource "aws_security_group" "minecraft" {
 }
 
 # Key Pair
-resource "aws_key_pair" "home" {
-  key_name   = "Home"
-  public_key = var.your_public_key
-}
+# resource "aws_key_pair" "home" {
+#   key_name   = "Home"
+#   public_key = var.your_public_key
+# }
 
 # Minecraft EC2 Instance
 resource "aws_instance" "minecraft" {
@@ -145,7 +145,7 @@ resource "aws_instance" "minecraft" {
   subnet_id                   = aws_subnet.minecraft_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
   associate_public_ip_address = true
-  key_name                    = aws_key_pair.home.key_name
+  # key_name                    = aws_key_pair.home.key_name
   user_data                   = <<-EOF
     #!/bin/bash
     sudo yum -y update
