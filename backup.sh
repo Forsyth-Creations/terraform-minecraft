@@ -9,7 +9,7 @@ find ./*.tar.gz -mtime +30 -exec rm {} \;
 
 cd /opt/minecraft/server
 NOW=$(date +"%Y-%m-%d")
-tar -cpvzf /opt/minecraft/backups/minecraft-$NOW.tar.gz world world_nether world_the_end
+tar -cpvzf /opt/minecraft/backups/minecraft-$NOW.tar.gz world world_nether world_the_end server.properties
 
 aws s3 cp /opt/minecraft/backups/minecraft-$NOW.tar.gz s3://forsyth-minecraft-world-backup/minecraft-$NOW.tar.gz
 

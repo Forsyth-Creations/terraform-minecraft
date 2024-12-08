@@ -162,7 +162,14 @@ resource "aws_instance" "minecraft" {
     # Update system and install dependencies
     sudo apt-get update -y
     sudo apt-get upgrade -y
-    sudo apt-get install -y curl wget openjdk-21-jdk awscli
+    sudo apt-get install -y curl wget openjdk-21-jdk
+    sudo apt install openjdk-21-jre-headless -y
+
+    # install aws cli
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    apt install unzip
+    unzip awscliv2.zip
+    sudo ./aws/install
 
     # Create necessary directories
     sudo mkdir -p /opt/minecraft/server
