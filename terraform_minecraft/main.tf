@@ -202,6 +202,8 @@ resource "aws_instance" "minecraft" {
   tags = {
     Name = "Minecraft-Instance"
   }
+
+  dependencies = [aws_iam_instance_profile.minecraft_s3_profile]
 }
 
 
