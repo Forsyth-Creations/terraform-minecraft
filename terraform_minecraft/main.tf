@@ -19,6 +19,12 @@ variable "your_region" {
   default     = "us-east-1"
 }
 
+provider "aws" {
+  profile = "default"
+  region  = var.your_region
+}
+
+
 variable "your_ami" {
   type        = string
   description = "AMI ID for the instance."
@@ -46,13 +52,9 @@ variable "mojang_server_url" {
 variable "s3_backup_bucket" {
   type        = string
   description = "S3 bucket for backups."
-  default     = "minecraft-world-backup"
+  default     = "forsyth-minecraft-world-backup"
 }
 
-provider "aws" {
-  profile = "default"
-  region  = var.your_region
-}
 
 # Create VPC
 resource "aws_vpc" "minecraft_vpc" {
