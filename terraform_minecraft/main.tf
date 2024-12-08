@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "minecraft-terraform-state"   # Replace with your bucket name
+    bucket         = "forsyth-minecraft-terraform-state"   # Replace with your bucket name
     key            = "minecraft-terraform.tfstate"       # Path to the state file in the bucket
     region         = "us-east-1"               # Specify the appropriate region
     encrypt        = true                      # Optional: Enable server-side encryption
