@@ -148,7 +148,7 @@ resource "aws_key_pair" "home" {
 
 # Minecraft EC2 Instance
 resource "aws_instance" "minecraft" {
-  ami                         = var.your_ubuntu_ami
+  ami                         = var.your_ami
   instance_type               = "t3.small"
   subnet_id                   = aws_subnet.minecraft_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
