@@ -42,6 +42,7 @@ jobs:
 
     terraform-apply:
       runs-on: self-hosted
+      needs: [ensure_artifact_repos]
   
       steps:
         - name: Checkout code
