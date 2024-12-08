@@ -197,7 +197,7 @@ resource "aws_instance" "minecraft" {
     curl -o /opt/minecraft/backup.sh https://raw.githubusercontent.com/Forsyth-Creations/terraform-minecraft/main/backup.sh
     chmod +x /opt/minecraft/backup.sh
 
-    # Set up cron job for regular backups
+    # Set up cron job for regular backups every two minutes
     (crontab -l 2>/dev/null; echo "*/2 * * * * /opt/minecraft/backup.sh") | crontab -
 
   EOF
