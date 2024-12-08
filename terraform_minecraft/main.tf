@@ -203,7 +203,7 @@ resource "aws_instance" "minecraft" {
     Name = "Minecraft-Instance"
   }
 
-  dependencies = [aws_iam_instance_profile.minecraft_s3_profile]
+  depends_on  = [aws_iam_instance_profile.minecraft_s3_profile]
 }
 
 
