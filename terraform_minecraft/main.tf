@@ -223,7 +223,7 @@ resource "aws_s3_bucket" "minecraft_backup" {
 }
 
 resource "aws_iam_role" "minecraft_s3_role" {
-  name = "minecraft_backup_role"
+  name = "forsyth_minecraft_backup_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
