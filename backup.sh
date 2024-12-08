@@ -11,7 +11,7 @@ cd /opt/minecraft/server
 NOW=$(date +"%Y-%m-%d")
 tar -cpvzf /opt/minecraft/backups/minecraft-$NOW.tar.gz world world_nether world_the_end
 
-aws s3 cp /opt/minecraft/backups/minecraft-$NOW.tar.gz s3://086133709882-minecraft-backup-1/minecraft-$NOW.tar.gz
+aws s3 cp /opt/minecraft/backups/minecraft-$NOW.tar.gz s3://forsyth-minecraft-world-backup/minecraft-$NOW.tar.gz
 
 # Done
 echo "Backup complete."
