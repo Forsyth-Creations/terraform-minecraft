@@ -145,17 +145,52 @@ resource "aws_instance" "minecraft" {
   subnet_id                   = aws_subnet.minecraft_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
   associate_public_ip_address = true
-  # key_name                    = aws_key_pair.home.key_name
+  iam_instance_profile        = aws_iam_role.minecraft_s3_role.name
   user_data                   = <<-EOF
     #!/bin/bash
+    set -e
+
+    # Update system and install dependencies
     sudo yum -y update
     sudo rpm --import https://yum.corretto.aws/corretto.key
     sudo curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo
     sudo yum install -y java-21-amazon-corretto-devel.x86_64
-    wget -O server.jar ${var.mojang_server_url}
-    java -Xmx1024M -Xms1024M -jar server.jar nogui
-    sed -i 's/eula=false/eula=true/' eula.txt
-    java -Xmx1024M -Xms1024M -jar server.jar nogui
+    sudo yum install -y aws-cli
+
+    # Create necessary directories
+    sudo mkdir -p /opt/minecraft/server
+    sudo mkdir -p /opt/minecraft/backups
+    sudo chown -R ec2-user:ec2-user /opt/minecraft
+
+    # Fetch the latest backup from S3
+    BACKUP_BUCKET="${var.s3_backup_bucket}"
+    BACKUP_FILE=$(aws s3 ls s3://$BACKUP_BUCKET/ --recursive | sort | tail -n 1 | awk '{print $4}')
+    if [ -n "$BACKUP_FILE" ]; then
+        aws s3 cp s3://$BACKUP_BUCKET/$BACKUP_FILE /opt/minecraft/backups/latest-backup.tar.gz
+        tar -xzf /opt/minecraft/backups/latest-backup.tar.gz -C /opt/minecraft/server
+    else
+        echo "No backup found. Starting with a fresh server."
+    fi
+
+    # Download and configure Minecraft server if no backup exists
+    if [ ! -f "/opt/minecraft/server/server.jar" ]; then
+        cd /opt/minecraft/server
+        wget -O server.jar ${var.mojang_server_url}
+        java -Xmx1024M -Xms1024M -jar server.jar nogui || true
+        sed -i 's/eula=false/eula=true/' eula.txt
+    fi
+
+    # Start the server
+    cd /opt/minecraft/server
+    java -Xmx1024M -Xms1024M -jar server.jar nogui &
+
+    # Download the backup script
+    curl -o /opt/minecraft/backup.sh https://raw.githubusercontent.com/Forsyth-Creations/terraform-minecraft/main/backup.sh
+    chmod +x /opt/minecraft/backup.sh
+
+    # Set up cron job for regular backups
+    (crontab -l 2>/dev/null; echo "*/2 * * * * /opt/minecraft/backup.sh") | crontab -
+
   EOF
 
   tags = {
@@ -163,6 +198,59 @@ resource "aws_instance" "minecraft" {
   }
 }
 
+
+
 output "instance_ip_addr" {
   value = aws_instance.minecraft.public_ip
+}
+
+resource "aws_s3_bucket" "minecraft_backup" {
+  bucket        = "minecraft-world-backup"
+  acl           = "private"
+  force_destroy = true
+
+  tags = {
+    Name = "Minecraft-World-Backup"
+  }
+}
+
+resource "aws_iam_role" "minecraft_s3_role" {
+  name = "minecraft-s3-backup-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_policy" "minecraft_s3_policy" {
+  name = "minecraft-s3-backup-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action   = ["s3:PutObject", "s3:GetObject", "s3:ListBucket"]
+      Effect   = "Allow"
+      Resource = [
+        aws_s3_bucket.minecraft_backup.arn,
+        "${aws_s3_bucket.minecraft_backup.arn}/*"
+      ]
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "minecraft_s3_role_attachment" {
+  role       = aws_iam_role.minecraft_s3_role.name
+  policy_arn = aws_iam_policy.minecraft_s3_policy.arn
+}
+
+resource "aws_iam_instance_profile" "minecraft_s3_profile" {
+  name = "minecraft-s3-backup-profile"
+  role = aws_iam_role.minecraft_s3_role.name
 }
