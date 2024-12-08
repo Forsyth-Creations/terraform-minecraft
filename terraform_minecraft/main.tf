@@ -27,8 +27,8 @@ provider "aws" {
 
 variable "your_ami" {
   type        = string
-  description = "AMI ID for the instance."
-  default     = "ami-0453ec754f44f9a4a"
+  description = "Ubuntu AMI String"
+  default     = "ami-0e2c8caa4b6378d8c"
 }
 
 variable "your_ip" {
@@ -148,7 +148,7 @@ resource "aws_key_pair" "home" {
 
 # Minecraft EC2 Instance
 resource "aws_instance" "minecraft" {
-  ami                         = var.your_ami
+  ami                         = var.your_ubuntu_ami
   instance_type               = "t3.small"
   subnet_id                   = aws_subnet.minecraft_public_subnet.id
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
@@ -160,16 +160,14 @@ resource "aws_instance" "minecraft" {
     set -e
 
     # Update system and install dependencies
-    sudo yum -y update
-    sudo rpm --import https://yum.corretto.aws/corretto.key
-    sudo curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo
-    sudo yum install -y java-21-amazon-corretto-devel.x86_64
-    sudo yum install -y aws-cli
+    sudo apt-get update -y
+    sudo apt-get upgrade -y
+    sudo apt-get install -y curl wget openjdk-21-jdk awscli
 
     # Create necessary directories
     sudo mkdir -p /opt/minecraft/server
     sudo mkdir -p /opt/minecraft/backups
-    sudo chown -R ec2-user:ec2-user /opt/minecraft
+    sudo chown -R ubuntu:ubuntu /opt/minecraft
 
     # Fetch the latest backup from S3
     BACKUP_BUCKET="${var.s3_backup_bucket}"
@@ -206,8 +204,9 @@ resource "aws_instance" "minecraft" {
     Name = "Minecraft-Instance"
   }
 
-  depends_on  = [aws_iam_instance_profile.minecraft_s3_profile]
+  depends_on = [aws_iam_instance_profile.minecraft_s3_profile]
 }
+
 
 
 
