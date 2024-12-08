@@ -212,7 +212,6 @@ output "instance_ip_addr" {
 
 resource "aws_s3_bucket" "minecraft_backup" {
   bucket        = var.s3_backup_bucket
-  region       = var.your_region
 
   tags = {
     Name = "Minecraft-World-Backup"
