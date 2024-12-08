@@ -212,7 +212,7 @@ output "instance_ip_addr" {
 
 resource "aws_s3_bucket" "minecraft_backup" {
   bucket        = var.s3_backup_bucket
-  force_destroy = true
+  region       = var.your_region
 
   tags = {
     Name = "Minecraft-World-Backup"
@@ -220,7 +220,7 @@ resource "aws_s3_bucket" "minecraft_backup" {
 }
 
 resource "aws_iam_role" "minecraft_s3_role" {
-  name = "minecraft-s3-backup-role"
+  name = "minecraft_backup_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
