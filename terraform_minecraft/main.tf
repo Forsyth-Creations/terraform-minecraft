@@ -22,7 +22,7 @@ variable "your_region" {
 variable "your_ami" {
   type        = string
   description = "AMI ID for the instance."
-  default     = "ami-0c3fd0f5d33134a76"
+  default     = "ami-0453ec754f44f9a4a"
 }
 
 variable "your_ip" {
