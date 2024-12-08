@@ -34,11 +34,13 @@ variable "your_ip" {
 variable "your_public_key" {
   type        = string
   description = "This will be in ~/.ssh/id_rsa.pub by default."
+  default    = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD"
 }
 
 variable "mojang_server_url" {
   type        = string
   description = "Copy the server download link from here https://www.minecraft.net/en-us/download/server/."
+  default = "https://piston-data.mojang.com/v1/objects/4707d00eb834b446575d89a61a11b5d548d8c001/server.jar"
 }
 
 provider "aws" {
