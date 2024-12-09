@@ -34,7 +34,7 @@ variable "your_ami" {
 variable "your_ip" {
   type        = string
   description = "IP for admin access."
-  default     = "0.0.0.0/0"
+  default     = "98.249.4.159/32"
 }
 
 variable "your_public_key" {
