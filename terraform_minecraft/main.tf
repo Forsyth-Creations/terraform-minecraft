@@ -223,10 +223,6 @@ output "instance_ip_addr" {
 
 data "aws_s3_bucket" "minecraft_backup" {
   bucket        = var.s3_backup_bucket
-
-  tags = {
-    Name = "Minecraft-World-Backup"
-  }
 }
 
 resource "aws_iam_role" "minecraft_s3_role" {
