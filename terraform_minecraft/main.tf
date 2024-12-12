@@ -221,7 +221,7 @@ output "instance_ip_addr" {
   value = aws_instance.minecraft.public_ip
 }
 
-resource "aws_s3_bucket" "minecraft_backup" {
+data "aws_s3_bucket" "minecraft_backup" {
   bucket        = var.s3_backup_bucket
 
   tags = {

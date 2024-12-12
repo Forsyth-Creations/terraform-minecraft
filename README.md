@@ -45,4 +45,4 @@ Rather than spending hours following [the official guide](https://help.minecraft
 - Copy the IP output by the previous command into Minecraft.
 - Wait a minute for the server to spin up.
 - Play.
-- Irrecoverably shut everything down with `terraform destroy`.
+- Irrecoverably shut everything down with `terraform destroy`. However, your server data will be saved in the `minecraft` directory in S3.
