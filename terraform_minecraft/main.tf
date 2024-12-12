@@ -34,7 +34,7 @@ variable "your_ami" {
 variable "your_ip" {
   type        = string
   description = "IP for admin access."
-  default     = "98.249.4.159/32"
+  default     = "0.0.0.0/0"
 }
 
 variable "your_public_key" {
@@ -221,8 +221,12 @@ output "instance_ip_addr" {
   value = aws_instance.minecraft.public_ip
 }
 
-data "aws_s3_bucket" "minecraft_backup" {
+resource "aws_s3_bucket" "minecraft_backup" {
   bucket        = var.s3_backup_bucket
+
+  tags = {
+    Name = "Minecraft-World-Backup"
+  }
 }
 
 resource "aws_iam_role" "minecraft_s3_role" {
