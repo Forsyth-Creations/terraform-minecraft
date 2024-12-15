@@ -16,7 +16,7 @@ terraform {
 variable "your_region" {
   type        = string
   description = "AWS region for the server."
-  default     = "us-east-1"
+  default     = "us-east-1a"
 }
 
 provider "aws" {
