@@ -16,7 +16,7 @@ terraform {
 variable "your_region" {
   type        = string
   description = "AWS region for the server."
-  default     = "us-east-1a"
+  default     = "us-east-1"
 }
 
 provider "aws" {
@@ -61,6 +61,8 @@ resource "aws_vpc" "minecraft_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
+
+  
 
   tags = {
     Name = "Minecraft-VPC"
